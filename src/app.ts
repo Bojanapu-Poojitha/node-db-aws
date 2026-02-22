@@ -26,6 +26,14 @@ const dbConnect = new Pool({
     rejectUnauthorized: false,
   },
 });
+dbConnect.connect()
+  .then(() => {
+    console.log("connect to DB successfully");
+  })
+  .catch((err) => {
+    console.error("failed connecting to DB:", err.message);
+    process.exit(1); 
+  });
 console.log("connecting to DB:", process.env.DB_HOST);
 
 app.get("/allUsers", async (req: Request, res: Response) => {
@@ -76,4 +84,12 @@ app.post("/addUser", async (req: Request, res: Response) => {
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);
+});
+process.on('handle', (reason, promise) => {
+  console.error(' rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('uncaught Exception:', err);
+  process.exit(1);  
 });
